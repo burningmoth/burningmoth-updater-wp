@@ -142,8 +142,17 @@ add_action('wp_ajax_bmcupdater_update_extension', function(){
 	// get file headers ...
 	$response = wp_remote_head($update->url);
 
-	// error ? ...
+	// request error ? ...
 	if ( is_wp_error($response) ) wp_send_json_error($response);
+
+	// response error ? ...
+	if ( floor($response['response']['code']/100) != 2 ) {
+		wp_send_json_error( new \WP_Error('server_error', sprintf(
+			'%d: %s',
+			$response['response']['code'],
+			$response['response']['message']
+		) ) );
+	}
 
 	// has etag and etag doesn't match update hash ? ...
 	if (
