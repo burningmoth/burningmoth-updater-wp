@@ -57,6 +57,14 @@ add_action(__NAMESPACE__.'\cron', function(){
 		// process manifest versions ...
 		foreach ( $manifest->versions as $version ) {
 
+			// verified version requirements ...
+			if (
+				!is_object($version)
+				|| !isset($version->version)
+				|| !isset($version->url)
+				|| !isset($version->hash)
+			) continue;
+
 			// greater version required ...
 			if ( version_compare($version->version, $ext->version, '<=') ) continue;
 

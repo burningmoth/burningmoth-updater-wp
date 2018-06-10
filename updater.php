@@ -111,7 +111,7 @@ function theme_basename( $file ) {
 function get_extensions() {
 
 	// get filtered extensions info ...
-	$exts = apply_filters(__NAMESPACE__.'\extensions', array());
+	$exts = (array) apply_filters(__NAMESPACE__.'\extensions', array());
 
 	// normalize path keys ...
 	$exts = array_combine(
@@ -122,8 +122,16 @@ function get_extensions() {
 	// add additional extension data ...
 	array_walk($exts, function( &$info, $file ){
 
-		// plugin ? ...
+		// info not an array for some ungodly reason ? ick !
 		if (
+			!is_array($info)
+		) {
+			$info = false;
+			return;
+		}
+
+		// plugin ? ...
+		elseif (
 			strpos($file, 'plugins/')
 			&& ( include_once \ABSPATH . 'wp-admin/includes/plugin.php' )
 			&& ( $plugin = get_plugin_data($file, false, false) )
