@@ -117,5 +117,32 @@ User `install_plugins` and `install_themes` permissions are required for update 
 		function( $file, $id = '', $type = 'plugin' ){ ... }, 
 		10, 3 
 	);
-		
+	
+	// validates an extension version from downloaded manifest
+	add_filter(
+		'BurningMoth\Updater\validate_version',
+		/**
+		 * Filter callback.
+		 * @param bool $valid
+		 * @param string $file
+		 *	- full path to extension file
+		 *	- for plugins, the primary file containing meta data
+		 * 	- for themes, probably functions.php or style.css
+		 * @param object $version
+		 *	- version object defined by manifest.json
+		 * @param object $extension_info
+		 *	- object processed from BurningMoth\Updater\extensions filter
+		 *	- minimally contains properties
+		 *		- manifest_url (url manifest was downloaded from)
+		 *		- version (extension version)
+		 *		- type ("theme" or "plugin")
+		 *		- dir (system path to directory where extension is installed)
+		 * @param object $manifest
+		 *	- downloaded manifest
+		 * @return bool
+		 */
+		function( $info, $valid, $file, $version, $extension_info, $manifest ){ ... },
+		10, 4
+	);
+	
 	...		

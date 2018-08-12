@@ -104,6 +104,9 @@ add_action(__NAMESPACE__.'\cron', function(){
 				&& version_compare($version->max_php, phpversion(), '<=')
 			) continue;
 
+			// validate extension ?
+			if ( ! apply_filters(__NAMESPACE__.'\validate_version', true, $file, $version, $ext, $manifest ) ) continue;
+
 			// passed the tests ? add to potential versions ...
 			$versions[] = $version;
 

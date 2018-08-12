@@ -19,7 +19,7 @@ if (
  * @syntax $updates[__DIR__] = [version number].
  */
 add_filter(__NAMESPACE__.'\updaters', function( $updaters ){
-	$updaters[__DIR__] = '1.0';
+	$updaters[__DIR__] = '1.1';
 	return $updaters;
 });
 
