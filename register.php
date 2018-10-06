@@ -7,8 +7,10 @@ namespace BurningMoth\Updater;
 
 // minimum requirements ...
 if (
+	// running cron or admin panel ...
+	!( defined('DOING_CRON') || is_admin() )
 	// PHP 5.3+
-	version_compare(phpversion(), '5.3', '<')
+	|| version_compare(phpversion(), '5.3', '<')
 	// WP 4.2+
 	|| version_compare($GLOBALS['wp_version'], '4.2', '<')
 ) return true;
@@ -19,7 +21,7 @@ if (
  * @syntax $updates[__DIR__] = [version number].
  */
 add_filter(__NAMESPACE__.'\updaters', function( $updaters ){
-	$updaters[__DIR__] = '1.1';
+	$updaters[__DIR__] = '2.0';
 	return $updaters;
 });
 
@@ -47,4 +49,4 @@ add_action('init', function(){
 	// load updater ...
 	include trailingslashit(namespace\PATH) . 'updater.php';
 
-});
+}, 11);

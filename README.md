@@ -1,5 +1,5 @@
 # WordPress Extension Updater
-Checks for, downloads and installs updates to an individual theme or plugin hosted by third party.
+Checks for updates to an individual theme or plugin hosted by third party.
 
 ## Installation
 After installing this library to a plugin or theme include the `register.php` file in it anywhere so long as it's before the `init` action hook is called.
@@ -47,6 +47,13 @@ Register the plugin or theme with the following filter.
 			 */
 			'allow_experimental' => true,
 			
+			/**
+			 * URL pointing to an icon image.
+			 * Displayed for plugins on the WordPress updates page.
+			 * @var url (optional)
+			 */
+			'icon' => 'https://host.domain/path/to/icon.png',
+			
 		);
 		
 		return $extensions;
@@ -61,73 +68,34 @@ Register the plugin or theme with the following filter.
 			{
 				"version": "1.0",
 				"url": "https://host.domain/path/to/extension.zip",
-				"hash": "[md5_file value of extension.zip]",
+				"detail_url": "https://host.domain/path/to/release/notes.html",
 				"description": "Brief summary of changes in this version.",
 				"min_wordpress": "[minimum wordpress version compatibility]",
 				"max_wordpress": "[maximum wordpress version compatibility]",
 				"min_php": "[minimum php version compatibility]",
-				"max_php": "[maximum php version compatibility]"
+				"max_php": "[maximum php version compatibility]",
+				"min_version": "[minimum extension version to upgrade from]",
+				"max_version": "[maximum extension version to upgrade from]"
 			},
 			...
 		]
 	}
 
-The above `version`, `url` and `hash` keys are required. Others are optional.
+The above `version` and `url` keys are required. Others are optional.
 
 The extension ZIP file should be one suitable for manual installation, containing a single directory containing the extension files.
-
-Cron hook `BurningMoth\Updater\cron` is scheduled to process manifests for updates daily.
-
-## Permissions
-User `install_plugins` and `install_themes` permissions are required for update links to appear on admin Plugins and Themes pages respectively.
 
 ## Hooks
 
 	<?php
-	...
-		
-	// fires before plugin is temporarily deactivated and files are updated
-	add_action(
-		'BurningMoth\Updater\before_update',
-		/**
-		 * Action callback.
-		 * @param string $file
-		 *	- full path to extension file
-		 *	- for plugins, the primary file containing meta data
-		 * 	- for themes, probably functions.php or style.css
-		 * @param string $id
-		 *	- for plugins, the plugin basename, ex. "my_plugin/my_plugin.php"
-		 *	- for themes, the theme stylesheet, ex. "my_theme"
-		 * @param string $type
-		 *	- either 'plugin' or 'theme'
-		 */
-		function( $file, $id = '', $type = 'plugin' ){
-			...
-		}, 
-		10, 3
-	);
-	
-	// fires after files have been updated and plugin reactivated
-	add_action(
-		'BurningMoth\Updater\after_update',
-		/**
-		 * Action callback same as BurningMoth\Updater\before_update callback.
-		 * @note if a plugin update has changed which file the meta data is stored in then $file and $id values will reflect that change.
-		 */
-		function( $file, $id = '', $type = 'plugin' ){ ... }, 
-		10, 3 
-	);
+	...			
 	
 	// validates an extension version from downloaded manifest
 	add_filter(
 		'BurningMoth\Updater\validate_version',
 		/**
 		 * Filter callback.
-		 * @param bool $valid
-		 * @param string $file
-		 *	- full path to extension file
-		 *	- for plugins, the primary file containing meta data
-		 * 	- for themes, probably functions.php or style.css
+		 * @param bool $valid		 
 		 * @param object $version
 		 *	- version object defined by manifest.json
 		 * @param object $extension_info
@@ -141,7 +109,7 @@ User `install_plugins` and `install_themes` permissions are required for update 
 		 *	- downloaded manifest
 		 * @return bool
 		 */
-		function( $info, $valid, $file, $version, $extension_info, $manifest ){ ... },
+		function( $valid, $version, $extension_info, $manifest ){ ... },
 		10, 4
 	);
 	
