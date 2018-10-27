@@ -107,7 +107,7 @@ function get_manifest( $ext ) {
 		!isset($ext->manifest_url)
 		|| filter_var($ext->manifest_url, FILTER_VALIDATE_URL) === false
 	) {
-		trigger_error(sprintf('Invalid manifest url!'), \E_USER_WARNING);
+		trigger_error(sprintf('Invalid manifest url "%s"!', $ext->manifest_url), \E_USER_WARNING);
 		return false;
 	}
 
@@ -129,7 +129,7 @@ function get_manifest( $ext ) {
 		|| !isset($manifest->versions)
 		|| !is_array($manifest->versions)
 	) {
-		trigger_error('Invalid manifest format!', \E_USER_WARNING);
+		trigger_error(sprintf('Invalid manifest format %s!', $ext->manifest_url), \E_USER_WARNING);
 		return false;
 	}
 
